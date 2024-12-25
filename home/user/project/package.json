@@ -1,0 +1,8 @@
+{
+  // ... other configurations
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    // ... other scripts
+  },
+  // ... other configurations
+}
