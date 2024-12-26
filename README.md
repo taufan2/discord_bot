@@ -25,12 +25,12 @@ Ikuti langkah-langkah berikut untuk menjalankan bot:
 
 1. **Clone repositori**:
    ```bash
-   git clone https://github.com/username/discord-bot-groq.git
+   git clone https://github.com/taufan2/discord_bot.git
    ```
 
 2. **Masuk ke direktori proyek**:
    ```bash
-   cd discord-bot-groq
+   cd discord_bot
    ```
 
 3. **Install dependensi**:
