@@ -1,18 +1,30 @@
-import Groq from 'groq-sdk';
-import { GROQ_API_KEY, SYSTEM_PROMPT } from '../config/environment';
+import {SYSTEM_PROMPT} from '../config/environment';
+import {formatMessage} from "../helpers/messageFormatter";
+import groq from "../config/groqConfig";
 
-const groq = new Groq({ apiKey: GROQ_API_KEY });
+export interface IMessage {
+    id: string;
+    role: "user" | "assistant";
+    content: string;
+    replyId: string | null;
+    createdAt: Date;
+}
 
-export async function generateResponse(content: string): Promise<string> {
+export async function generateResponse(allMessages: IMessage[]): Promise<string> {
+    const formattedMessages = allMessages.map(message => ({
+        role: message.role,
+        content: formatMessage(message)
+    }));
+
     const completion = await groq.chat.completions.create({
         messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            { role: "user", content: content }
+            {role: "system", content: SYSTEM_PROMPT},
+            ...formattedMessages,
         ],
         model: "llama-3.3-70b-versatile",
         temperature: 0.5,
         max_tokens: 1024,
     });
 
-    return completion.choices[0]?.message?.content || "Sorry, I couldn't generate a response.";
+    return completion.choices[0]?.message?.content || "Maaf, saya tidak bisa menghasilkan respons.";
 }

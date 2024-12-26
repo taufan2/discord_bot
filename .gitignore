@@ -50,3 +50,11 @@ coverage/
 
 # Yarn Integrity file
 .yarn-integrity
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.idea_modules/
+out/

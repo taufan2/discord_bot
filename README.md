@@ -1,27 +1,25 @@
 # Discord Bot dengan GROQ AI
 
-Bot Discord yang menggunakan GROQ AI untuk menghasilkan respons.
-
-## Deskripsi
-
-Proyek ini adalah sebuah bot Discord yang memanfaatkan kemampuan AI dari GROQ untuk menghasilkan respons terhadap pesan pengguna. Bot ini ditulis dalam TypeScript dan menggunakan library discord.js.
+Bot Discord yang menggunakan GROQ AI untuk menghasilkan respons terhadap pesan pengguna. Ditulis dalam TypeScript dan menggunakan library discord.js.
 
 ## Fitur
 
 - Integrasi dengan GROQ AI untuk menghasilkan respons
 - Konfigurasi mudah menggunakan file .env
-- Penanganan pesan Discord yang efisien
+- Penanganan pesan yang efisien
+- Penyimpanan riwayat chat menggunakan MongoDB
 
 ## Prasyarat
 
-Sebelum Anda memulai, pastikan Anda telah menginstal:
-
 - Node.js (versi 14.0.0 atau lebih baru)
-- npm (biasanya terinstal bersama Node.js)
+- npm
+- Akun Discord Developer
+- Akun GROQ AI
+- MongoDB
 
-## Instalasi
+## Memulai
 
-1. Clone repositori ini:
+1. Clone repositori:
    ```
    git clone https://github.com/username/discord-bot-groq.git
    ```
@@ -31,40 +29,64 @@ Sebelum Anda memulai, pastikan Anda telah menginstal:
    cd discord-bot-groq
    ```
 
-3. Instal dependensi:
+3. Install dependensi:
    ```
    npm install
    ```
 
-4. Salin file `.env.example` menjadi `.env` dan isi dengan kredensial Anda:
+4. Salin file .env.example menjadi .env:
    ```
    cp .env.example .env
    ```
 
-5. Edit file `.env` dan tambahkan token Discord dan API key GROQ Anda:
+5. Edit file .env dan tambahkan token Discord dan kunci API GROQ Anda:
    ```
    DISCORD_TOKEN=your_discord_token_here
    GROQ_API_KEY=your_groq_api_key_here
+   MONGODB_URI=your_mongodb_uri_here
    ```
 
-## Penggunaan
+6. Jalankan bot:
+   ```
+   npm start
+   ```
 
-Untuk menjalankan bot:
+## Pengembangan
+
+Untuk menjalankan bot dalam mode pengembangan dengan restart otomatis saat ada perubahan file:
 
 ```
-npm start
+npm run dev
+```
+
+## Pengujian
+
+Jalankan suite pengujian dengan perintah:
+
+```
+npm test
 ```
 
 ## Konfigurasi
 
-Anda dapat mengubah perilaku bot dengan memodifikasi file `src/config/environment.ts`. Di sini Anda dapat mengubah prompt sistem dan pengaturan lainnya.
+Anda dapat mengubah perilaku dan pengaturan bot dengan memodifikasi file `src/config/environment.ts`.
+
+## Struktur Proyek
+
+- `src/`: Kode sumber utama
+  - `bot/`: Kode spesifik bot
+  - `config/`: File konfigurasi
+  - `handlers/`: Logika penanganan event dan pesan
+  - `helpers/`: Fungsi utilitas
+  - `models/`: Struktur data dan kelas
+  - `services/`: Kelas layanan untuk interaksi dengan sistem eksternal
+- `test/`: File pengujian
+- `config/`: File konfigurasi tambahan
 
 ## Kontribusi
 
-Kontribusi selalu diterima dengan baik. Jika Anda ingin berkontribusi:
+Kontribusi sangat diterima. Silakan fork repositori, buat branch fitur baru, commit perubahan Anda, push ke branch, dan buka Pull Request.
 
-1. Fork repositori
-2. Buat branch fitur baru (`git checkout -b feature/AmazingFeature`)
-3. Commit perubahan Anda (`git commit -m 'Add some AmazingFeature'`)
-4. Push ke branch (`git push origin feature/AmazingFeature`)
-5. Buka Pull Request
+## Kontak
+
+Jika Anda memiliki pertanyaan atau masukan, silakan buka issue di repositori GitHub ini.

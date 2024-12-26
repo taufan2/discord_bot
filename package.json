@@ -7,7 +7,8 @@
     "start": "node build/main.js",
     "build": "tsc",
     "dev": "ts-node-dev --respawn src/main.ts",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -17,16 +18,21 @@
     "@discordjs/core": "^2.0.0",
     "@discordjs/rest": "^2.4.0",
     "@types/node": "^22.10.2",
+    "dayjs": "^1.11.13",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.7",
     "groq-sdk": "^0.9.1",
+    "mongoose": "^8.9.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.14",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
     "ts-node-dev": "^2.0.0"
   }
 }

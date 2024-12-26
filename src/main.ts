@@ -1,5 +1,11 @@
-import { createBot } from './bot/discordBot';
-import { DISCORD_TOKEN } from './config/environment';
+import discordBot from './bot/discordBot';
+import {DISCORD_TOKEN} from './config/environment';
+import {connectDB} from "./config/dbConfig";
 
-const client = createBot();
-client.login(DISCORD_TOKEN);
+async function main() {
+    await connectDB();
+    await discordBot.login(DISCORD_TOKEN);
+}
+
+main()
+    .catch(console.error);

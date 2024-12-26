@@ -1,7 +1,8 @@
-import { Client, GatewayIntentBits, Message } from 'discord.js';
-import { handleHello, handleMessage } from '../handlers/messageHandlers';
+import {Client, GatewayIntentBits, Message} from 'discord.js';
+import {handleHello, handleMessage} from '../handlers/messageHandlers';
+import {sanitizeContent} from "../helpers/sanitizeContent";
 
-export function createBot(): Client {
+function createBot(): Client {
     const client = new Client({
         intents: [
             GatewayIntentBits.Guilds,
@@ -16,15 +17,18 @@ export function createBot(): Client {
 
     client.on('messageCreate', async (message: Message) => {
         if (message.mentions.has(client.user!.id)) {
-            const content = message.content.replace(/<@!?[\d]+>/g, '').trim();
-
+            const content = sanitizeContent(message.content);
             if (content.toLowerCase() === 'hello') {
                 await handleHello(message);
             } else {
-                await handleMessage(message, content);
+                await handleMessage(message);
             }
         }
     });
 
     return client;
 }
+
+const discordBot = createBot();
+
+export default discordBot;
