@@ -15,9 +15,9 @@ describe('dbServices', () => {
   describe('getChats', () => {
     it('should fetch chats from the database', async () => {
       const result = await getChats({
-        channelId: '1321781072849141780',
+        channelId: '1321818156091572235',
         userId: '383968696575721473',
-        limit: 5
+        limit: 50
       });
 
       // Periksa apakah result adalah array

@@ -17,6 +17,7 @@
   "dependencies": {
     "@discordjs/core": "^2.0.0",
     "@discordjs/rest": "^2.4.0",
+    "@google/generative-ai": "^0.21.0",
     "@types/node": "^22.10.2",
     "dayjs": "^1.11.13",
     "discord.js": "^14.16.3",

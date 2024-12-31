@@ -1,11 +1,14 @@
 import {Message} from 'discord.js';
 import {handleHello} from './helloHandler';
-import {generateResponse, IMessage} from '../services/qroqService';
+import {generateResponse as generateGroqResponse, IMessage} from '../services/qroqService';
+import {generateResponse as generateGeminiResponse} from '../services/geminiService';
 import {replyMessage} from "../services/chatServices";
 import {sanitizeContent} from '../helpers/sanitizeContent';
 import {getChats} from '../services/dbServices';
+import {PROVIDER} from '../config/environment';
 
 export async function handleMessage(message: Message) {
+    let saveChat = true;
     const channel = message.channel;
     if ('sendTyping' in channel) {
         await channel.sendTyping();
@@ -15,14 +18,14 @@ export async function handleMessage(message: Message) {
     const previousChats = await getChats({
         channelId: channel.id,
         userId: message.author.id,
-        limit: 100 // Anda bisa menyesuaikan jumlah pesan yang ingin diambil
+        limit: 50 // Anda bisa menyesuaikan jumlah pesan yang ingin diambil
     });
 
     let allMessages: IMessage[] = []
     allMessages = allMessages.concat(
         previousChats.map(chat => ({
             id: chat.messageId,
-            role: chat.role === 'user' ? 'assistant' : 'user',
+            role: chat.role,
             content: chat.content,
             createdAt: chat.createdAt,
             replyId: chat.replyTo?.messageId || null,
@@ -38,14 +41,20 @@ export async function handleMessage(message: Message) {
 
     let response: string;
     try {
-        response = await generateResponse(allMessages);
+        // Pilih antara Groq dan Gemini berdasarkan nilai PROVIDER
+        if (PROVIDER === 'GEMINI') {
+            response = await generateGeminiResponse(allMessages);
+        } else {
+            response = await generateGroqResponse(allMessages);
+        }
     } catch (error) {
-        console.error('Error calling Groq API:', error);
+        console.error(`Error calling ${PROVIDER} API:`, error);
         response = "Maaf, saya mengalami kesalahan saat memproses permintaan Anda.";
+        saveChat = false;
     }
 
     try {
-        await replyMessage(message, response);
+        await replyMessage(message, response, saveChat);
     } catch (error) {
         console.error('Error sending message to Discord:', error);
     }

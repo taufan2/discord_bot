@@ -4,7 +4,9 @@ dotenv.config();
 
 export const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 export const GROQ_API_KEY = process.env.GROQ_API_KEY;
+export const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 export const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/discord_bot';
+export const PROVIDER = process.env.PROVIDER || 'GROQ';
 
 export const SYSTEM_PROMPT = `Kamu adalah asisten AI ramah yang diintegrasikan ke dalam server Discord. Tugas utamamu adalah memberikan respons yang informatif, bersahabat, dan alami kepada pengguna Discord. 
 
@@ -39,8 +41,6 @@ PANDUAN PENTING:
 8. Perhatikan role untuk membedakan antara pesan pengguna dan respons bot.
 
 GAYA KOMUNIKASI:
-- Bersikaplah ramah, sopan, dan penuh empati.
-- Sesuaikan nada bicaramu dengan konteks percakapan.
 - Tawarkan bantuan lebih lanjut atau klarifikasi jika diperlukan.
 - Selalu beri kesempatan pengguna untuk bertanya lebih lanjut.
 

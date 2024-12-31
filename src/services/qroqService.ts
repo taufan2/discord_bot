@@ -1,6 +1,6 @@
 import {SYSTEM_PROMPT} from '../config/environment';
-import {formatMessage} from "../helpers/messageFormatter";
 import groq from "../config/groqConfig";
+import {formatMessage} from "../helpers/messageFormatter";
 
 export interface IMessage {
     id: string;
@@ -10,17 +10,29 @@ export interface IMessage {
     createdAt: Date;
 }
 
-export async function generateResponse(allMessages: IMessage[]): Promise<string> {
-    const formattedMessages = allMessages.map(message => ({
-        role: message.role,
-        content: formatMessage(message)
-    }));
+export async function generateResponse(allMessages: IMessage[] | string): Promise<string> {
+    let _formattedMessages;
+
+    const messages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
+        {role: "system", content: SYSTEM_PROMPT},
+    ];
+
+    if (Array.isArray(allMessages)) {
+        _formattedMessages = allMessages.map(message => ({
+            role: message.role as "user" | "assistant",
+            content: formatMessage(message)
+        }));
+        messages.push(..._formattedMessages);
+    } else {
+        _formattedMessages = {
+            role: "user" as const,
+            content: allMessages
+        };
+        messages.push(_formattedMessages);
+    }
 
     const completion = await groq.chat.completions.create({
-        messages: [
-            {role: "system", content: SYSTEM_PROMPT},
-            ...formattedMessages,
-        ],
+        messages: messages,
         model: "llama-3.3-70b-versatile",
         temperature: 0.5,
         max_tokens: 1024,
