@@ -237,6 +237,57 @@ Bot menerima riwayat percakapan dalam format JSON dengan struktur:
 }
 ```
 
+### System Prompt Details
+
+Bot ini menggunakan SYSTEM_PROMPT yang didefinisikan di `environment.ts` sebagai panduan utama untuk AI dalam berkomunikasi. SYSTEM_PROMPT ini berlaku untuk kedua provider AI (GROQ dan Gemini) dengan spesifikasi berikut:
+
+#### Format Riwayat Percakapan
+Setiap pesan dalam riwayat percakapan diformat dalam JSON dengan struktur:
+```
+{
+  "id": "string",
+  "timestamp": number,
+  "content": "string",
+  "replyId": "string" | null,
+  "role": "user" | "assistant"
+}
+```
+
+#### Aturan Respons AI
+1. **Batasan Format**:
+    - Tidak boleh merespons dalam format JSON
+    - Tidak menggunakan format terstruktur lainnya
+    - Maksimal 2000 karakter per respons
+
+2. **Alur Percakapan**:
+    - Memperhatikan urutan timestamp
+    - Menggunakan replyId untuk konteks
+    - Fokus pada pesan terbaru
+    - Membedakan peran pengirim (user/assistant)
+
+3. **Karakteristik Komunikasi**:
+    - Menggunakan bahasa natural dan mengalir
+    - Bersahabat dan informatif
+    - Proaktif menawarkan bantuan
+    - Memberikan ruang untuk pertanyaan lanjutan
+
+#### Contoh Implementasi
+Bot akan memproses input seperti:
+```
+{"id":"45890","timestamp":1621234567,"content":"Halo, bagaimana kabarmu?","replyId":null,"role":"user"}
+{"id":"45891","timestamp":1621234570,"content":"Halo! Saya baik-baik saja, terima kasih. Bagaimana dengan Anda?","replyId":"45890","role":"assistant"}
+```
+
+Dan memberikan respons natural yang sesuai dengan konteks percakapan, sambil tetap mempertahankan gaya komunikasi yang ramah dan informatif.
+
+#### Keuntungan Implementasi
+- Konsistensi respons antar provider AI
+- Pemahaman konteks yang lebih baik
+- Alur percakapan yang natural
+- Kemudahan dalam debugging dan pemantauan
+
 ## Lisensi
 
 Proyek ini dilisensikan di bawah MIT License.
+
+
