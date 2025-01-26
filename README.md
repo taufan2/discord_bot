@@ -7,6 +7,7 @@ Bot Discord ini menggunakan GROQ AI dan Gemini AI untuk menghasilkan respons ter
 - **Multi AI Integration**:
     - GROQ AI untuk respons cepat dan efisien
     - Gemini AI untuk kemampuan pemahaman konteks yang lebih baik
+    - DEEPSEEK AI untuk pemrosesan bahasa yang lebih canggih
 - **Konfigurasi Mudah**: Menggunakan file `.env` untuk menyimpan konfigurasi sensitif seperti token dan kunci API
 - **Penanganan Pesan Efisien**: Memproses dan merespons pesan dengan cepat
 - **Penyimpanan Riwayat Chat**: Menggunakan MongoDB untuk menyimpan riwayat percakapan
@@ -19,6 +20,7 @@ Bot Discord ini menggunakan GROQ AI dan Gemini AI untuk menghasilkan respons ter
 - **AI Integration**:
     - GROQ AI SDK v0.9.1
     - Google Generative AI (Gemini)
+    - DEEPSEEK AI SDK
 - **Database**: MongoDB (via mongoose v8.9)
 - **Development Tools**:
     - ESLint for code quality
@@ -52,13 +54,14 @@ Sebelum memulai, pastikan Anda memiliki:
 
 ## Konfigurasi Provider AI
 
-Bot ini mendukung dua provider AI yang dapat dikonfigurasi:
+Bot ini mendukung tiga provider AI yang dapat dikonfigurasi:
 
 ### 1. Pemilihan Provider
 Atur provider yang diinginkan melalui environment variable PROVIDER:
 ```
 PROVIDER=GROQ    # Untuk menggunakan GROQ AI (default)
 PROVIDER=GEMINI  # Untuk menggunakan Gemini AI
+PROVIDER=DEEPSEEK # Untuk menggunakan DEEPSEEK AI
 ```
 
 ### 2. Konfigurasi Gemini
@@ -79,6 +82,18 @@ Untuk menggunakan GROQ AI, tambahkan konfigurasi berikut di file `.env`:
 GROQ_API_KEY=your_groq_api_key  # Dapatkan dari GROQ AI Dashboard
 ```
 
+### 4. Konfigurasi DEEPSEEK
+Untuk menggunakan DEEPSEEK AI, tambahkan konfigurasi berikut di file `.env`:
+```
+DEEPSEEK_API_KEY=your_deepseek_api_key  # Dapatkan dari DEEPSEEK AI Dashboard
+```
+
+DEEPSEEK menggunakan model terbaru yang menawarkan:
+- Pemahaman bahasa yang mendalam
+- Kemampuan analisis konteks yang kuat
+- Dukungan untuk berbagai bahasa
+- Optimasi untuk tugas-tugas spesifik
+
 ### Contoh File .env Lengkap
 ```
 # Bot Configuration
@@ -86,11 +101,12 @@ DISCORD_TOKEN=your_discord_token
 MONGODB_URI=your_mongodb_uri
 
 # AI Provider Selection
-PROVIDER=GROQ  # atau GEMINI
+PROVIDER=GROQ  # atau GEMINI atau DEEPSEEK
 
 # AI Provider Keys
 GROQ_API_KEY=your_groq_api_key
 GEMINI_API_KEY=your_gemini_api_key
+DEEPSEEK_API_KEY=your_deepseek_api_key
 ```
 
 ### Rekomendasi Penggunaan
@@ -105,6 +121,11 @@ GEMINI_API_KEY=your_gemini_api_key
     - Dukungan percakapan multi-turn yang lebih baik
     - Cocok untuk interaksi kompleks
 
+3. **DEEPSEEK AI**
+    - Pemahaman bahasa yang sangat baik
+    - Optimal untuk tugas-tugas spesifik
+    - Cocok untuk analisis mendalam
+
 ## Cara Kerja
 
 1. **Menjalankan Bot**:
@@ -117,9 +138,10 @@ GEMINI_API_KEY=your_gemini_api_key
    npm run dev
    ```
 
-3. **Interaksi dengan Bot**: Bot akan merespons pesan yang menyebutnya menggunakan salah satu dari dua AI engine:
+3. **Interaksi dengan Bot**: Bot akan merespons pesan yang menyebutnya menggunakan salah satu dari tiga AI engine:
     - GROQ AI untuk respons cepat dan umum
     - Gemini AI untuk respons yang membutuhkan pemahaman konteks lebih dalam
+    - DEEPSEEK AI untuk pemrosesan bahasa yang lebih canggih
 
 ## Struktur Proyek
 
@@ -144,7 +166,8 @@ src/
 │   ├── chatServices.ts
 │   ├── dbServices.ts
 │   ├── qroqService.ts
-│   └── geminiService.ts
+│   ├── geminiService.ts
+│   └── deepseekService.ts
 └── test/
     ├── dbServices.test.ts
     └── geminiService.test.ts
@@ -189,15 +212,16 @@ src/
 - `dbServices.ts`: Database operations
 - `qroqService.ts`: GROQ AI integration
 - `geminiService.ts`: Gemini AI integration
-    - Handles context-aware conversations
-    - Supports chat history
-    - Uses Gemini 1.5 Flash model
+- `deepseekService.ts`: DEEPSEEK AI integration
+    - Pemahaman bahasa yang mendalam
+    - Optimasi untuk tugas spesifik
+    - Dukungan multi-bahasa
 
 ### Development Workflow
 
 1. **Message Processing Flow**:
    ```
-   Discord Message → messageHandlers.ts → chatServices.ts → qroqService.ts/geminiService.ts → MongoDB
+   Discord Message → messageHandlers.ts → chatServices.ts → qroqService.ts/geminiService.ts/deepseekService.ts → MongoDB
    ```
 
 2. **Command Handling**:
@@ -212,7 +236,7 @@ src/
 
 ### AI Prompt System
 
-Bot ini menggunakan system prompt yang terstruktur untuk kedua AI engine:
+Bot ini menggunakan system prompt yang terstruktur untuk ketiga AI engine:
 
 #### GROQ AI
 - Optimized for quick responses
@@ -224,6 +248,12 @@ Bot ini menggunakan system prompt yang terstruktur untuk kedua AI engine:
 - Advanced reasoning capabilities
 - Support for chat history
 - Uses Gemini 1.5 Flash model for faster response times
+
+#### DEEPSEEK AI
+- Deep language understanding
+- Advanced context analysis
+- Support for multiple languages
+- Optimized for specific tasks
 
 #### Format Input
 Bot menerima riwayat percakapan dalam format JSON dengan struktur:
@@ -239,7 +269,7 @@ Bot menerima riwayat percakapan dalam format JSON dengan struktur:
 
 ### System Prompt Details
 
-Bot ini menggunakan SYSTEM_PROMPT yang didefinisikan di `environment.ts` sebagai panduan utama untuk AI dalam berkomunikasi. SYSTEM_PROMPT ini berlaku untuk kedua provider AI (GROQ dan Gemini) dengan spesifikasi berikut:
+Bot ini menggunakan SYSTEM_PROMPT yang didefinisikan di `environment.ts` sebagai panduan utama untuk AI dalam berkomunikasi. SYSTEM_PROMPT ini berlaku untuk ketiga provider AI (GROQ, Gemini, dan DEEPSEEK) dengan spesifikasi berikut:
 
 #### Format Riwayat Percakapan
 Setiap pesan dalam riwayat percakapan diformat dalam JSON dengan struktur:
