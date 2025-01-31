@@ -10,6 +10,26 @@ import {sanitizeContent} from '../helpers/sanitizeContent';
 import {getChats} from '../services/dbServices';
 import {PROVIDER} from '../config/environment';
 
+// Helper function to handle potential JSON responses
+export function extractContent(response: string): string {
+    try {
+        // Check if the response is a JSON string
+        if (response.trim().startsWith('{') && response.trim().endsWith('}')) {
+            const parsed = JSON.parse(response);
+            // If it's our expected format with content field
+            if (parsed.content) {
+                console.warn('Received JSON response from LLM when text was expected');
+                return parsed.content;
+            }
+        }
+        // If not JSON or doesn't match our format, return as is
+        return response;
+    } catch (error) {
+        // If JSON parsing fails, it's probably not JSON, return as is
+        return response;
+    }
+}
+
 export async function handleMessage(message: Message) {
     let saveChat = true;
     const channel = message.channel;
@@ -41,9 +61,10 @@ export async function handleMessage(message: Message) {
         // Add current message to previous messages
         const allMessages = [...previousMessages, currentMessage];
 
+        let rawResponse: string;
         switch (PROVIDER.toUpperCase()) {
             case 'GROQ':
-                response = await generateGroqResponse(
+                rawResponse = await generateGroqResponse(
                     allMessages.map(msg => ({
                         id: msg.messageId,
                         role: msg.role as "user" | "assistant",
@@ -52,9 +73,10 @@ export async function handleMessage(message: Message) {
                         createdAt: msg.createdAt
                     }))
                 );
+                response = extractContent(rawResponse);
                 break;
             case 'GEMINI':
-                response = await generateGeminiResponse(
+                rawResponse = await generateGeminiResponse(
                     allMessages.map(msg => ({
                         id: msg.messageId,
                         role: msg.role as "user" | "assistant",
@@ -63,9 +85,10 @@ export async function handleMessage(message: Message) {
                         createdAt: msg.createdAt
                     }))
                 );
+                response = extractContent(rawResponse);
                 break;
             case 'DEEPSEEK':
-                response = await generateDeepseekResponse(
+                rawResponse = await generateDeepseekResponse(
                     allMessages.map(msg => ({
                         id: msg.messageId,
                         role: msg.role as "user" | "assistant",
@@ -74,9 +97,10 @@ export async function handleMessage(message: Message) {
                         createdAt: msg.createdAt
                     }))
                 );
+                response = extractContent(rawResponse);
                 break;
             case 'OPENROUTER':
-                response = await generateOpenRouterResponse(
+                rawResponse = await generateOpenRouterResponse(
                     allMessages.map(msg => ({
                         id: msg.messageId,
                         role: msg.role as "user" | "assistant",
@@ -85,9 +109,10 @@ export async function handleMessage(message: Message) {
                         createdAt: msg.createdAt
                     }))
                 );
+                response = extractContent(rawResponse);
                 break;
             case 'TOGETHER':
-                response = await generateTogetherResponse(
+                rawResponse = await generateTogetherResponse(
                     allMessages.map(msg => ({
                         id: msg.messageId,
                         role: msg.role as "user" | "assistant",
@@ -96,6 +121,7 @@ export async function handleMessage(message: Message) {
                         createdAt: msg.createdAt
                     }))
                 );
+                response = extractContent(rawResponse);
                 break;
             default:
                 response = "Provider tidak valid. Silakan periksa konfigurasi PROVIDER di .env";
