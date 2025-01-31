@@ -1,8 +1,10 @@
 import {Message} from 'discord.js';
 import {handleHello} from './helloHandler';
-import {generateResponse as generateGroqResponse, IMessage} from '../services/qroqService';
+import {generateResponse as generateGroqResponse} from '../services/qroqService';
 import {generateResponse as generateGeminiResponse} from '../services/geminiService';
 import {generateResponse as generateDeepseekResponse} from '../services/deepseekService';
+import {generateResponse as generateOpenRouterResponse} from '../services/openRouterService';
+import {generateResponse as generateTogetherResponse} from '../services/togetherService';
 import {replyMessage} from "../services/chatServices";
 import {sanitizeContent} from '../helpers/sanitizeContent';
 import {getChats} from '../services/dbServices';
@@ -15,69 +17,97 @@ export async function handleMessage(message: Message) {
         await channel.sendTyping();
     }
 
-    // Mendapatkan pesan-pesan sebelumnya
-    const previousChats = await getChats({
-        channelId: channel.id,
+    // Get previous messages
+    const previousMessages = await getChats({
+        channelId: message.channelId,
         userId: message.author.id,
-        limit: 20 // Anda bisa menyesuaikan jumlah pesan yang ingin diambil
+        limit: 12 // Optional: you can adjust this number based on how many previous messages you want to retrieve
     });
-
-    let allMessages: IMessage[] = []
-    allMessages = allMessages.concat(
-        previousChats.map(chat => ({
-            id: chat.messageId,
-            role: chat.role,
-            content: chat.content,
-            createdAt: chat.createdAt,
-            replyId: chat.replyTo?.messageId || null,
-        }))
-    )
-    allMessages.push({
-        id: message.id,
-        role: 'user',
-        content: sanitizeContent(message.content),
-        createdAt: message.createdAt,
-        replyId: message.reference?.messageId || null,
-    })
+    const sanitizedContent = sanitizeContent(message.content);
 
     let response: string;
     try {
-        // Choose between Groq, Gemini, and DeepSeek based on PROVIDER value
-        switch (PROVIDER) {
+        // Create current message object that matches the structure from database
+        const currentMessage = {
+            messageId: message.id,
+            content: sanitizedContent,
+            createdAt: message.createdAt,
+            role: "user" as const,
+            replyTo: message.reference ? {
+                messageId: message.reference.messageId
+            } : null
+        };
+
+        // Add current message to previous messages
+        const allMessages = [...previousMessages, currentMessage];
+
+        switch (PROVIDER.toUpperCase()) {
+            case 'GROQ':
+                response = await generateGroqResponse(
+                    allMessages.map(msg => ({
+                        id: msg.messageId,
+                        role: msg.role as "user" | "assistant",
+                        content: msg.content,
+                        replyId: msg.replyTo?.messageId || null,
+                        createdAt: msg.createdAt
+                    }))
+                );
+                break;
             case 'GEMINI':
-                response = await generateGeminiResponse(allMessages);
+                response = await generateGeminiResponse(
+                    allMessages.map(msg => ({
+                        id: msg.messageId,
+                        role: msg.role as "user" | "assistant",
+                        content: msg.content,
+                        replyId: msg.replyTo?.messageId || null,
+                        createdAt: msg.createdAt
+                    }))
+                );
                 break;
             case 'DEEPSEEK':
-                response = await generateDeepseekResponse(allMessages);
+                response = await generateDeepseekResponse(
+                    allMessages.map(msg => ({
+                        id: msg.messageId,
+                        role: msg.role as "user" | "assistant",
+                        content: msg.content,
+                        replyId: msg.replyTo?.messageId || null,
+                        createdAt: msg.createdAt
+                    }))
+                );
+                break;
+            case 'OPENROUTER':
+                response = await generateOpenRouterResponse(
+                    allMessages.map(msg => ({
+                        id: msg.messageId,
+                        role: msg.role as "user" | "assistant",
+                        content: msg.content,
+                        replyId: msg.replyTo?.messageId || null,
+                        createdAt: msg.createdAt
+                    }))
+                );
+                break;
+            case 'TOGETHER':
+                response = await generateTogetherResponse(
+                    allMessages.map(msg => ({
+                        id: msg.messageId,
+                        role: msg.role as "user" | "assistant",
+                        content: msg.content,
+                        replyId: msg.replyTo?.messageId || null,
+                        createdAt: msg.createdAt
+                    }))
+                );
                 break;
             default:
-                response = await generateGroqResponse(allMessages);
-        }
-
-        // Try to parse response as JSON and extract content if possible
-        try {
-            const jsonResponse = JSON.parse(response);
-            if (jsonResponse && typeof jsonResponse === 'object' && 'content' in jsonResponse) {
-                response = jsonResponse.content;
-                console.debug('Successfully parsed JSON response and extracted content');
-            } else {
-                console.debug('Response is JSON but does not contain content property');
-            }
-        } catch (e) {
-            console.debug('Response is not in JSON format, using raw response');
-            // Non-JSON responses are acceptable, continue with original response
+                response = "Provider tidak valid. Silakan periksa konfigurasi PROVIDER di .env";
+                saveChat = false;
         }
     } catch (error) {
-        console.error(`Error calling ${PROVIDER} API:`, error);
-        response = "Maaf, saya mengalami kesalahan saat memproses permintaan Anda.";
+        console.error('Error generating response:', error);
+        response = "Maaf, terjadi kesalahan saat memproses pesan Anda.";
         saveChat = false;
     }
 
-    try {
-        await replyMessage(message, response, saveChat);
-    } catch (error) {
-        console.error('Error sending message to Discord:', error);
-    }
+    await replyMessage(message, response, saveChat);
 }
 
 export {handleHello};

@@ -15,13 +15,6 @@ function createBot(): Client {
         console.log(`Logged in as ${client.user?.tag}!`);
     });
 
-    client.on('ready', async () => {
-        const commands = await client.application?.commands.fetch();
-        for (const command of commands?.values() ?? []) {
-            command.delete();
-        }
-    });
-
     client.on('messageCreate', async (message: Message) => {
         if (message.mentions.has(client.user!.id)) {
             const content = sanitizeContent(message.content);

@@ -56,43 +56,50 @@ Sebelum memulai, pastikan Anda memiliki:
 
 Bot ini mendukung tiga provider AI yang dapat dikonfigurasi:
 
-### 1. Pemilihan Provider
-Atur provider yang diinginkan melalui environment variable PROVIDER:
-```
-PROVIDER=GROQ    # Untuk menggunakan GROQ AI (default)
-PROVIDER=GEMINI  # Untuk menggunakan Gemini AI
-PROVIDER=DEEPSEEK # Untuk menggunakan DEEPSEEK AI
-```
+### Provider yang Tersedia
 
-### 2. Konfigurasi Gemini
-Untuk menggunakan Gemini AI, tambahkan konfigurasi berikut di file `.env`:
-```
-GEMINI_API_KEY=your_gemini_api_key  # Dapatkan dari Google Cloud Console
-```
+1. **GROQ AI**
+   ```env
+   GROQ_API_KEY=your_groq_api_key
+   GROQ_MODEL=mixtral-8x7b-32768  # default
+   ```
 
-Gemini menggunakan model `gemini-1.5-flash` yang menawarkan:
-- Respons cepat
-- Pemahaman konteks yang baik
-- Dukungan chat history
-- System prompt customization
+2. **Gemini AI**
+   ```env
+   GEMINI_API_KEY=your_gemini_api_key
+   GEMINI_MODEL=gemini-1.5-flash-8b  # default
+   ```
 
-### 3. Konfigurasi GROQ
-Untuk menggunakan GROQ AI, tambahkan konfigurasi berikut di file `.env`:
-```
-GROQ_API_KEY=your_groq_api_key  # Dapatkan dari GROQ AI Dashboard
-```
+3. **DeepSeek AI**
+   ```env
+   DEEPSEEK_API_KEY=your_deepseek_api_key
+   DEEPSEEK_MODEL=deepseek-chat  # default
+   ```
 
-### 4. Konfigurasi DEEPSEEK
-Untuk menggunakan DEEPSEEK AI, tambahkan konfigurasi berikut di file `.env`:
-```
-DEEPSEEK_API_KEY=your_deepseek_api_key  # Dapatkan dari DEEPSEEK AI Dashboard
-```
+4. **OpenRouter**
+   ```env
+   OPENROUTER_API_KEY=your_openrouter_api_key
+   OPENROUTER_MODEL=google/gemini-pro-1.5-exp  # default
+   ```
 
-DEEPSEEK menggunakan model terbaru yang menawarkan:
-- Pemahaman bahasa yang mendalam
-- Kemampuan analisis konteks yang kuat
-- Dukungan untuk berbagai bahasa
-- Optimasi untuk tugas-tugas spesifik
+5. **Together AI**
+   ```env
+   TOGETHER_API_KEY=your_together_api_key
+   TOGETHER_MODEL=meta-llama/Llama-3.3-70B-Instruct-Turbo-Free  # default
+   ```
+
+### Konfigurasi Model
+
+Setiap provider memiliki model default yang dapat diubah melalui environment variables. Untuk mengubah model, cukup sesuaikan variabel MODEL yang sesuai di file .env Anda.
+
+### Parameter Konfigurasi
+
+Setiap provider memiliki parameter konfigurasi berikut:
+- `temperature`: Mengontrol kreativitas output (0.0 - 1.0)
+- `max_tokens`: Jumlah maksimum token dalam respons
+- `top_p`: Mengontrol diversity output (0.0 - 1.0)
+- `frequency_penalty`: Mengurangi pengulangan kata (0.0 - 2.0)
+- `presence_penalty`: Mendorong topik baru (0.0 - 2.0)
 
 ### Contoh File .env Lengkap
 ```
@@ -149,7 +156,7 @@ DEEPSEEK_API_KEY=your_deepseek_api_key
 src/
 ├── main.ts
 ├── bot/
-│   └── discordBot.ts
+│   ��── discordBot.ts
 ├── config/
 │   ├── environment.ts
 │   ├── dbConfig.ts

@@ -1,6 +1,7 @@
-import {SYSTEM_PROMPT} from '../config/environment';
+import { SYSTEM_PROMPT } from '../config/environment';
 import groq from "../config/groqConfig";
-import {formatMessage} from "../helpers/messageFormatter";
+import { GROQ_CONFIG } from "../config/groqConfig";
+import { formatMessage } from "../helpers/messageFormatter";
 
 export interface IMessage {
     id: string;
@@ -14,7 +15,7 @@ export async function generateResponse(allMessages: IMessage[] | string): Promis
     let _formattedMessages;
 
     const messages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
-        {role: "system", content: SYSTEM_PROMPT},
+        { role: "system", content: SYSTEM_PROMPT },
     ];
 
     if (Array.isArray(allMessages)) {
@@ -33,9 +34,9 @@ export async function generateResponse(allMessages: IMessage[] | string): Promis
 
     const completion = await groq.chat.completions.create({
         messages: messages,
-        model: "llama-3.3-70b-versatile",
-        temperature: 0.5,
-        max_tokens: 1024,
+        model: GROQ_CONFIG.model,
+        temperature: GROQ_CONFIG.temperature,
+        max_tokens: GROQ_CONFIG.max_tokens,
     });
 
     return completion.choices[0]?.message?.content || "Maaf, saya tidak bisa menghasilkan respons.";
