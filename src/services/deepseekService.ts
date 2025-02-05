@@ -1,11 +1,17 @@
-import {SYSTEM_PROMPT} from '../config/environment';
+import {SYSTEM_PROMPT, SYSTEM_PROMPT_GENERATE_IMAGE} from '../config/environment';
 import {createChatCompletion} from '../config/deepseekConfig';
 import {IMessage} from './qroqService';
 import {formatMessage} from '../helpers/messageFormatter';
 
-export async function generateResponse(allMessages: IMessage[] | string): Promise<string> {
+export async function generateResponse(allMessages: IMessage[] | string, options?: {
+    generateImagePrompt?: boolean;
+}): Promise<string> {
+    let prompt = SYSTEM_PROMPT;
+    if (options?.generateImagePrompt) {
+        prompt = SYSTEM_PROMPT_GENERATE_IMAGE;
+    }
     const messages = [
-        {role: "system", content: SYSTEM_PROMPT}
+        {role: "system", content: prompt}
     ];
 
     if (Array.isArray(allMessages)) {

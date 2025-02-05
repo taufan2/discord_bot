@@ -1,0 +1,6 @@
+import { TOGETHER_IMAGE_API_KEY, TOGETHER_IMAGE_MODEL } from "./environment";
+
+export const TOGETHER_IMAGE_GEN_CONFIG = {
+	apiKey: TOGETHER_IMAGE_API_KEY,
+	model: TOGETHER_IMAGE_MODEL,
+};

@@ -7,6 +7,7 @@ Bot Discord ini menggunakan GROQ AI dan Gemini AI untuk menghasilkan respons ter
 - **Multi AI Integration**:
     - GROQ AI untuk respons cepat dan efisien
     - Gemini AI untuk kemampuan pemahaman konteks yang lebih baik
+    - Together AI untuk generasi gambar dengan model Llama 3
     - DEEPSEEK AI untuk pemrosesan bahasa yang lebih canggih
 - **Konfigurasi Mudah**: Menggunakan file `.env` untuk menyimpan konfigurasi sensitif seperti token dan kunci API
 - **Penanganan Pesan Efisien**: Memproses dan merespons pesan dengan cepat
@@ -21,6 +22,7 @@ Bot Discord ini menggunakan GROQ AI dan Gemini AI untuk menghasilkan respons ter
     - GROQ AI SDK v0.9.1
     - Google Generative AI (Gemini)
     - DEEPSEEK AI SDK
+    - Together AI untuk generasi gambar
 - **Database**: MongoDB (via mongoose v8.9)
 - **Development Tools**:
     - ESLint for code quality
@@ -88,6 +90,12 @@ Bot ini mendukung tiga provider AI yang dapat dikonfigurasi:
    TOGETHER_MODEL=meta-llama/Llama-3.3-70B-Instruct-Turbo-Free  # default
    ```
 
+6. **Together Image Generation**
+   ```env
+   TOGETHER_IMAGE_API_KEY=your_together_image_api_key
+   TOGETHER_IMAGE_MODEL=stabilityai/stable-diffusion-xl-base-1.0  # default
+   ```
+
 ### Konfigurasi Model
 
 Setiap provider memiliki model default yang dapat diubah melalui environment variables. Untuk mengubah model, cukup sesuaikan variabel MODEL yang sesuai di file .env Anda.
@@ -114,6 +122,7 @@ PROVIDER=GROQ  # atau GEMINI atau DEEPSEEK
 GROQ_API_KEY=your_groq_api_key
 GEMINI_API_KEY=your_gemini_api_key
 DEEPSEEK_API_KEY=your_deepseek_api_key
+TOGETHER_IMAGE_API_KEY=your_together_image_api_key
 ```
 
 ### Rekomendasi Penggunaan
@@ -133,6 +142,10 @@ DEEPSEEK_API_KEY=your_deepseek_api_key
     - Optimal untuk tugas-tugas spesifik
     - Cocok untuk analisis mendalam
 
+4. **Together AI**
+    - Generasi gambar berdasarkan teks
+    - Mendukung model Stable Diffusion dan Llama 3
+
 ## Cara Kerja
 
 1. **Menjalankan Bot**:
@@ -149,6 +162,7 @@ DEEPSEEK_API_KEY=your_deepseek_api_key
     - GROQ AI untuk respons cepat dan umum
     - Gemini AI untuk respons yang membutuhkan pemahaman konteks lebih dalam
     - DEEPSEEK AI untuk pemrosesan bahasa yang lebih canggih
+    - Together AI untuk generasi gambar dengan perintah `/image [prompt]`
 
 ## Struktur Proyek
 
@@ -156,7 +170,7 @@ DEEPSEEK_API_KEY=your_deepseek_api_key
 src/
 ├── main.ts
 ├── bot/
-│   ��── discordBot.ts
+│   └── discordBot.ts
 ├── config/
 │   ├── environment.ts
 │   ├── dbConfig.ts
@@ -261,6 +275,9 @@ Bot ini menggunakan system prompt yang terstruktur untuk ketiga AI engine:
 - Advanced context analysis
 - Support for multiple languages
 - Optimized for specific tasks
+
+#### Image Generation Prompt
+Bot menggunakan `SYSTEM_PROMPT_GENERATE_IMAGE` yang teroptimasi untuk membuat prompt generasi gambar yang detail dan teknis, menerjemahkan input bahasa Indonesia ke prompt Inggris teknis.
 
 #### Format Input
 Bot menerima riwayat percakapan dalam format JSON dengan struktur:
