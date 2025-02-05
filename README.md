@@ -1,6 +1,6 @@
-# Discord Bot dengan GROQ & Gemini AI
+# Multi-Provider AI Discord Bot
 
-Bot Discord ini menggunakan GROQ AI dan Gemini AI untuk menghasilkan respons terhadap pesan pengguna. Bot ini ditulis dalam TypeScript dan menggunakan library discord.js untuk berinteraksi dengan Discord.
+Bot Discord yang mengintegrasikan berbagai AI provider (GROQ, Gemini, DeepSeek, OpenRouter, Together AI) untuk memberikan respons cerdas dan generasi gambar. Dibangun dengan TypeScript dan discord.js, bot ini menawarkan fleksibilitas dalam pemilihan model AI dan kemampuan yang beragam.
 
 ## Fitur
 
